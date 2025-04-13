@@ -3,14 +3,20 @@ package app
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/sudeeya/avito-assignment/internal/config"
+	grpc_v1 "github.com/sudeeya/avito-assignment/internal/controller/grpc/v1"
+	http_v1 "github.com/sudeeya/avito-assignment/internal/controller/http/v1"
+	"github.com/sudeeya/avito-assignment/internal/grpcserver"
 	"github.com/sudeeya/avito-assignment/internal/httpserver"
 	"github.com/sudeeya/avito-assignment/internal/repository/postgres"
 	"github.com/sudeeya/avito-assignment/internal/service"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
 )
 
 const (
@@ -18,7 +24,9 @@ const (
 )
 
 type App struct {
-	server *http.Server
+	cfg        *config.Config
+	httpServer *http.Server
+	grpcServer *grpc.Server
 }
 
 func NewApp(ctx context.Context, cfg *config.Config) (*App, error) {
@@ -32,34 +40,68 @@ func NewApp(ctx context.Context, cfg *config.Config) (*App, error) {
 		return nil, fmt.Errorf("creating services: %w", err)
 	}
 
-	server := httpserver.NewServer(cfg.ServerConfig, services)
+	router := http_v1.NewRouter(services)
+	httpServer := httpserver.NewServer(cfg.ServerConfig, router)
+
+	pvzServiceServer := grpc_v1.NewPVZServiceServerImplementation(services)
+	grpcServer := grpcserver.NewServer(pvzServiceServer)
 
 	return &App{
-		server: server,
+		cfg:        cfg,
+		httpServer: httpServer,
+		grpcServer: grpcServer,
 	}, nil
 }
 
 func (a *App) Run(ctx context.Context) {
-	done := make(chan struct{})
+	var (
+		httpDone = make(chan struct{})
+		grpcDone = make(chan struct{})
+	)
+
 	go func() {
-		if err := a.server.ListenAndServe(); err != nil {
-			zap.S().Errorf("Listen and serve: %v", err)
+		defer close(httpDone)
+
+		zap.L().Info("Server is serving HTTP...")
+		if err := a.httpServer.ListenAndServe(); err != nil {
+			zap.S().Errorf("Serving HTTP: %v", err)
+		}
+	}()
+
+	go func() {
+		defer close(grpcDone)
+
+		listener, err := net.Listen("tcp", ":"+strconv.Itoa(a.cfg.ServerConfig.ServerGRPCPort))
+		if err != nil {
+			zap.S().Errorf("Announcing gRPC: %v", err)
+			return
 		}
 
-		close(done)
+		zap.L().Info("Server is serving gRPC...")
+		if err := a.grpcServer.Serve(listener); err != nil {
+			zap.S().Errorf("Serving gRPC: %v", err)
+		}
 	}()
 
 	select {
-	case <-done:
-		return
+	case <-httpDone:
+		a.Shutdown(ctx)
+	case <-grpcDone:
+		a.Shutdown(ctx)
 	case <-ctx.Done():
-		zap.L().Info("Server is shutting down...")
-
-		ctx, cancel := context.WithTimeout(context.Background(), _shutdownTimeout)
-		defer cancel()
-
-		if err := a.server.Shutdown(ctx); err != nil {
-			zap.S().Errorf("Shutdown: %v", err)
-		}
+		a.Shutdown(ctx)
 	}
+}
+
+func (a *App) Shutdown(ctx context.Context) {
+	zap.L().Info("Server is shutting down...")
+
+	ctx, cancel := context.WithTimeout(ctx, _shutdownTimeout)
+	defer cancel()
+
+	if err := a.httpServer.Shutdown(ctx); err != nil {
+		zap.S().Errorf("HTTP Server shutdown: %v", err)
+	}
+
+	a.grpcServer.GracefulStop()
 }

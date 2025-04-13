@@ -43,3 +43,13 @@ func (p *PVZService) GetPVZPagination(ctx context.Context, start time.Time, end 
 
 	return pvzs, nil
 }
+
+// GetPVZList implements PVZ.
+func (p *PVZService) GetPVZList(ctx context.Context) ([]model.PVZ, error) {
+	pvzs, err := p.repo.GetPVZList(ctx)
+	if err != nil {
+		return nil, ErrCannotGetPVZ
+	}
+
+	return pvzs, nil
+}

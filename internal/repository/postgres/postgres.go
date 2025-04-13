@@ -237,6 +237,50 @@ func (p *postgres) GetPVZPagination(ctx context.Context, start, end time.Time, l
 	return pvzs, nil
 }
 
+// GetPVZList implements repository.Repository.
+func (p *postgres) GetPVZList(ctx context.Context) ([]model.PVZ, error) {
+	query, args, err := p.builder.
+		Select(
+			"p.id",
+			"p.registration_date",
+			"c.name",
+		).
+		From("pvzs AS p").
+		LeftJoin("cities AS c ON p.city_id = c.id").
+		ToSql()
+	if err != nil {
+		return nil, fmt.Errorf("building query: %w", err)
+	}
+
+	rows, err := p.pool.Query(ctx, query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("selecting pvzs: %w", err)
+	}
+	defer rows.Close()
+
+	pvzs := make([]model.PVZ, 0)
+	for rows.Next() {
+		var pvz model.PVZ
+
+		err := rows.Scan(
+			&pvz.ID,
+			&pvz.RegistrationDate,
+			&pvz.City,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("scanning row: %w", err)
+		}
+
+		pvzs = append(pvzs, pvz)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterating rows: %w", err)
+	}
+
+	return pvzs, nil
+}
+
 // CreateReception implements repository.Repository.
 func (p *postgres) CreateReception(ctx context.Context, pvzID uuid.UUID) (model.Reception, error) {
 	tx, err := p.pool.Begin(ctx)

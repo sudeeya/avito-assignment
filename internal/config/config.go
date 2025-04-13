@@ -18,6 +18,7 @@ type LogConfig struct {
 
 type ServerConfig struct {
 	ServerHTTPPort  int    `env:"SERVER_HTTP_PORT,required"`
+	ServerGRPCPort  int    `env:"SERVER_GRPC_PORT,required"`
 	ServerSecretKey string `env:"SERVER_SECRET_KEY,required"`
 }
 

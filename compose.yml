@@ -1,0 +1,28 @@
+services:
+  db:
+    container_name: postgres
+    image: postgres
+    restart: always
+    env_file: .env
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    expose:
+      - 5432
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  server:
+    container_name: app
+    build: .
+    env_file: .env
+    ports:
+      - "${SERVER_HTTP_PORT}:${SERVER_HTTP_PORT}"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db-data:

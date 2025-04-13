@@ -3,9 +3,10 @@ package v1
 import (
 	context "context"
 
+	"google.golang.org/protobuf/types/known/timestamppb"
+
 	"github.com/sudeeya/avito-assignment/internal/model"
 	"github.com/sudeeya/avito-assignment/internal/service"
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type pvzServiceServerImplementation struct {

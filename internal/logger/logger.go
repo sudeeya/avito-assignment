@@ -3,9 +3,10 @@ package logger
 import (
 	"fmt"
 
-	"github.com/sudeeya/avito-assignment/internal/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+
+	"github.com/sudeeya/avito-assignment/internal/config"
 )
 
 const (

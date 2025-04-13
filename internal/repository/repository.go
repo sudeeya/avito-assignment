@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+
 	"github.com/sudeeya/avito-assignment/internal/model"
 )
 

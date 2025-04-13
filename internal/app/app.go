@@ -8,6 +8,9 @@ import (
 	"strconv"
 	"time"
 
+	"go.uber.org/zap"
+	"google.golang.org/grpc"
+
 	"github.com/sudeeya/avito-assignment/internal/config"
 	grpc_v1 "github.com/sudeeya/avito-assignment/internal/controller/grpc/v1"
 	http_v1 "github.com/sudeeya/avito-assignment/internal/controller/http/v1"
@@ -15,8 +18,6 @@ import (
 	"github.com/sudeeya/avito-assignment/internal/httpserver"
 	"github.com/sudeeya/avito-assignment/internal/repository/postgres"
 	"github.com/sudeeya/avito-assignment/internal/service"
-	"go.uber.org/zap"
-	"google.golang.org/grpc"
 )
 
 const (

@@ -6,10 +6,11 @@ import (
 	"os"
 	"os/signal"
 
+	"go.uber.org/zap"
+
 	"github.com/sudeeya/avito-assignment/internal/app"
 	"github.com/sudeeya/avito-assignment/internal/config"
 	"github.com/sudeeya/avito-assignment/internal/logger"
-	"go.uber.org/zap"
 )
 
 func main() {

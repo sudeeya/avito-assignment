@@ -12,10 +12,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/stdlib"
 	"github.com/pressly/goose/v3"
+	"go.uber.org/zap"
+
 	"github.com/sudeeya/avito-assignment/internal/config"
 	"github.com/sudeeya/avito-assignment/internal/model"
 	"github.com/sudeeya/avito-assignment/internal/repository"
-	"go.uber.org/zap"
 )
 
 // Reception statuses.

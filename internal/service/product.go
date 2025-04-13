@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
+
 	"github.com/sudeeya/avito-assignment/internal/model"
 	"github.com/sudeeya/avito-assignment/internal/repository"
 )

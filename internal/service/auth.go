@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/golang-jwt/jwt/v5"
+
 	"github.com/sudeeya/avito-assignment/internal/config"
 )
 

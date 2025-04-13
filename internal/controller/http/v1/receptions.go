@@ -6,8 +6,9 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"github.com/sudeeya/avito-assignment/internal/service"
 	"go.uber.org/zap"
+
+	"github.com/sudeeya/avito-assignment/internal/service"
 )
 
 func newReceptionsRouter(services *service.Services) *chi.Mux {

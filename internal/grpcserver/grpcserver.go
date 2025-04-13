@@ -1,8 +1,9 @@
 package grpcserver
 
 import (
-	v1 "github.com/sudeeya/avito-assignment/internal/controller/grpc/v1"
 	"google.golang.org/grpc"
+
+	v1 "github.com/sudeeya/avito-assignment/internal/controller/grpc/v1"
 )
 
 func NewServer(serviceServer v1.PVZServiceServer) *grpc.Server {

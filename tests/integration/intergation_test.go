@@ -77,7 +77,6 @@ func (s *IntegrationSuite) TestCreateAndCloseReception() {
 	s.Require().NoError(err, "Failed to read reception")
 
 	s.Require().NotEmpty(reception, "Reception is empty")
-	s.Require().NotEmpty(reception, "Reception is empty")
 	s.Require().Equal("in_progress", reception.Status, "Not in progress reception was returned")
 	s.Require().Equal(pvz.ID, reception.PVZID, "Not in progress reception was returned")
 

@@ -20,6 +20,7 @@ services:
     env_file: .env
     ports:
       - "${SERVER_HTTP_PORT}:${SERVER_HTTP_PORT}"
+      - "${SERVER_GRPC_PORT}:${SERVER_GRPC_PORT}"
     depends_on:
       db:
         condition: service_healthy

@@ -18,6 +18,7 @@ type Auth interface {
 type PVZ interface {
 	CreatePVZ(ctx context.Context, city string) (model.PVZ, error)
 	GetPVZPagination(ctx context.Context, start, end time.Time, limit, offset int) ([]model.PVZ, error)
+	GetPVZList(ctx context.Context) ([]model.PVZ, error)
 }
 
 type Reception interface {

@@ -20,7 +20,7 @@ jobs:
 
       - name: Run tests
         run: |
-          go test tests/integration/... -v
+          go test ./tests/integration/... -v
 
       - name: Stop services
         if: always()

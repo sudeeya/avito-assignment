@@ -1,0 +1,28 @@
+name: Integration tests
+
+on:
+  workflow_run:
+    workflows:
+      - Static analysis
+    types:
+      - completed
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run services
+        run: |
+          docker compose up -d --wait --wait-timeout 30
+
+      - name: Run tests
+        run: |
+          go test tests/integration/... -v
+
+      - name: Stop services
+        if: always()
+        run: |
+          docker compose down

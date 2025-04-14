@@ -41,6 +41,14 @@ Adds product to reception by *pvz_id* if PVZ has in progress reception.
 
 Server can also recieve gRPC. gRPC server listens on port `3000`. Check `internal/controller/grpc/v1` directory for more info.
 
+## Tests
+
+Integration test creates PVZ and reception, adds 50 random products and than closes reception. To run an integration test use command:
+```
+task integration
+```
+This test creates rows in database and doesn't delete them. This is not good.
+
 ## ERD
 
 The image below shows Entity Relationship Diagram for the database used in the project. Table `goose_db_version` is special and required for migrations.

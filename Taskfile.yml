@@ -27,3 +27,10 @@ tasks:
     desc: Stop and remove containers, networks.
     cmds:
       - docker compose down
+
+  integration:
+    desc: Run integration tests.
+    cmds:
+      - docker compose up --wait
+      - go test -count 1 -v ./tests/integration/...
+      - docker compose down
